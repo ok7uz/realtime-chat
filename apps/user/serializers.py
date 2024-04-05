@@ -8,7 +8,7 @@ from apps.user.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'image', 'first_name', 'last_name', 'is_staff', 'password']
+        fields = ['id', 'email', 'image', 'first_name', 'last_name']
 
 
 class LoginSerializer(TokenObtainPairSerializer):
@@ -32,6 +32,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             image=validated_data['image'],
         )
         user.set_password(validated_data['password'])
+        user.save()
         return user
 
     def validate(self, attrs):

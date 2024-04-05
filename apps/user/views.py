@@ -18,7 +18,7 @@ class UserListView(APIView):
     )
     def get(self, request):
         queryset = User.objects.all()
-        serializer = UserSerializer(queryset, many=True)
+        serializer = UserSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=200)
 
 
@@ -30,7 +30,7 @@ class ProfileView(APIView):
         tags=['User']
     )
     def get(self, request):
-        serializer = UserSerializer(request.user)
+        serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data, status=200)
 
 
@@ -47,7 +47,7 @@ class RegisterView(APIView):
         request_body=RegisterSerializer()
     )
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
+        serializer = RegisterSerializer(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=201)

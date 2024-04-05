@@ -12,10 +12,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 LOCAL_APPS = [
-    'apps.user.apps.UserConfig'
+    'apps.user.apps.UserConfig',
+    'apps.chat.apps.ChatConfig'
 ]
 
 THIRD_PARTY_APPS = [
+    'daphne',
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
@@ -24,14 +26,14 @@ THIRD_PARTY_APPS = [
 ]
 
 INSTALLED_APPS = [
+    *LOCAL_APPS,
+    *THIRD_PARTY_APPS,
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    *LOCAL_APPS,
-    *THIRD_PARTY_APPS,
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -107,6 +110,12 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 SIMPLE_JWT = {
