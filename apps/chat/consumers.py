@@ -21,7 +21,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
-        conversation = await database_sync_to_async(Conversation.objects.get)(id=int(self.room_name))
+        conversation = await database_sync_to_async(Conversation.objects.get)(id=self.room_name)
         sender = self.scope["user"]
         
         _message = await database_sync_to_async(Message.objects.create)(

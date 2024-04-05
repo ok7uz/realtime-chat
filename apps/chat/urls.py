@@ -6,5 +6,5 @@ from apps.chat.views import ConversationListView, GetConversationView, StartConv
 urlpatterns = [
     path('', ConversationListView.as_view(), name='conversations'),
     path('create/', StartConversationView.as_view(), name='create-conversation'),
-    path('<int:conversation_id>/', GetConversationView.as_view(), name='get-conversation'),
+    path('<uuid:conversation_id>/', GetConversationView.as_view(), name='get-conversation'),
 ]
