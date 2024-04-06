@@ -1,9 +1,10 @@
-from django.contrib.auth import authenticate
 from drf_yasg.utils import swagger_auto_schema
+
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 from apps.user.models import User
 from apps.user.serializers import UserSerializer, RegisterSerializer, LoginSerializer
@@ -34,9 +35,22 @@ class ProfileView(APIView):
         return Response(serializer.data, status=200)
 
 
-class LoginView(TokenObtainPairView):
+class LoginView(APIView):
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
+
+    @swagger_auto_schema(
+        tags=['Auth'],
+        request_body=LoginSerializer(),
+        responses={201: 'Tokens'}
+    )
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class RegisterView(APIView):
@@ -44,7 +58,8 @@ class RegisterView(APIView):
 
     @swagger_auto_schema(
         tags=['Auth'],
-        request_body=RegisterSerializer()
+        request_body=RegisterSerializer(),
+        responses={200: UserSerializer()}
     )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data, context={'request': request})
