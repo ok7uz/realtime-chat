@@ -1,10 +1,9 @@
 from django.urls import path
 
-from apps.chat.views import ConversationListView, GetConversationView, StartConversationView
+from apps.chat.views import ConversationListView, ConversationView
 
 
 urlpatterns = [
     path('', ConversationListView.as_view(), name='conversations'),
-    path('create/', StartConversationView.as_view(), name='create-conversation'),
-    path('<uuid:conversation_id>/', GetConversationView.as_view(), name='get-conversation'),
+    path('<uuid:conversation_id>/', ConversationView.as_view(), name='conversation-detail'),
 ]

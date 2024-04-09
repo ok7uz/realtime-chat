@@ -1,4 +1,3 @@
-from typing import Any
 from django.contrib.auth.backends import ModelBackend
 
 from apps.user.models import User

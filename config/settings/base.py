@@ -22,7 +22,6 @@ THIRD_PARTY_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'corsheaders',
-    'import_export',
 ]
 
 INSTALLED_APPS = [

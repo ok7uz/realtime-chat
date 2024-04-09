@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 from apps.chat.models import Conversation
 from apps.chat.serializers import ConversationListSerializer, ConversationSerializer
@@ -20,11 +20,7 @@ class ConversationListView(APIView):
         )
         serializer = ConversationListSerializer(instance=conversation_list, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class StartConversationView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    
     def post(self, request):
         data = request.data
         user_id = data.get('user_id', None)
@@ -39,19 +35,20 @@ class StartConversationView(APIView):
             Q(initiator=participant, receiver=request.user)
         )
         if conversation.exists():
-            return redirect(reverse('get-conversation', args=[conversation.first().id]))
+            return redirect(reverse('conversation-detail', args=[conversation.first().id]))
         else:
             conversation = Conversation.objects.create(initiator=request.user, receiver=participant)
             serializer = ConversationSerializer(instance=conversation, context={'request': request})
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class GetConversationView(APIView):
+class ConversationView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, conversation_id):
         user = request.user
         conversation = Conversation.objects.filter(id=conversation_id)
+        
         if not conversation.exists():
             return Response({'message': 'Conversation does not exist'}, status=status.HTTP_404_NOT_FOUND)
         elif not (conversation.first().initiator == user or conversation.first().receiver == user):

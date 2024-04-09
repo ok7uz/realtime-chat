@@ -10,7 +10,7 @@ from apps.user.models import User
 @database_sync_to_async
 def get_user(token):
     try:
-        user_id= jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.SIMPLE_JWT['ALGORITHM']])['user_id']
+        user_id = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.SIMPLE_JWT['ALGORITHM']])['user_id']
     except jwt.exceptions.DecodeError:
         return AnonymousUser()
     except jwt.ExpiredSignatureError:
@@ -25,6 +25,7 @@ class TokenAuthMiddleware(BaseMiddleware):
 
     def __init__(self, inner):
         self.inner = inner
+        super().__init__(inner)
 
     async def __call__(self, scope, receive, send):
         token = scope['query_string'].decode().split('=')[-1]
